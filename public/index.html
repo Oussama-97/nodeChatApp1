@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join | ChatApp</title>
+</head>
+
+<style>
+    button,
+button:hover {
+  border: none;
+  color: #fff;
+  padding: 10px;
+}
+.chat__messages,
+.chat__sidebar ul {
+  list-style-type: none;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue",
+    Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
+  font-size: 0.95rem;
+}
+li,
+ul {
+  list-style-position: inside;
+}
+h3 {
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.5rem;
+}
+button {
+  background: #265f82;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+button:hover {
+  background: #1f4c69;
+}
+button:disabled {
+  cursor: default;
+  background: #698ea5;
+}
+    .centered-form {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  justify-content: center;
+  background: linear-gradient(
+    325deg,
+    rgba(39, 107, 130, 1) 0,
+    rgba(49, 84, 129, 1) 100%
+  );
+}
+.centered-form__form {
+  background: rgba(250, 250, 250, 0.9);
+  border: 1px solid #e1e1e1;
+  border-radius: 5px;
+  padding: 0 20px;
+  margin: 20px;
+  width: 230px;
+}
+.form-field {
+  margin: 20px 0;
+}
+.form-field > * {
+  width: 100%;
+}
+.form-field label {
+  display: block;
+  margin-bottom: 7px;
+}
+.form-field input,
+.form-field select {
+  border: 1px solid #e1e1e1;
+  padding: 10px;
+}
+</style>
+<body class="centered-form">
+    <div class="centered-form__form">
+        <form action="/chat.html">
+            <div class="form-field">
+                <h3>Join a Chat</h3>
+            </div>
+            <div class="form-field">
+                <label for="">First Name</label>
+                <input type="text" name="firstName" autofocus>
+            </div>
+              <div class="form-field">
+                  <label for="">Last Name</label>
+                  <input type="text" name="lastName">
+              </div>
+            <div class="form-field">
+                <button>Log In</button>
+            </div>
+        </form>
+    </div>
+    
+</body>
+</html>
