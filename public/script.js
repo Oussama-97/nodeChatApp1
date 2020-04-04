@@ -6,6 +6,7 @@ var styleIsDefault = true;
 var emojiBoxIsOpen = false;
 
 var sendTo = '';
+var params = jQuery.deparam(window.location.search);
 
 const sendIcon = document.getElementById('sendIcon');
 const messageInput = document.getElementById('messageInput');
@@ -29,7 +30,7 @@ function changeStyle() {
 function createMessageRightHTML(messageContent) {
     return `<div class="message-right-container">
                 <div class="message-right">
-                    <p> ${messageContent} </p>
+                    <p style="word-break: break-all;"> ${messageContent} </p>
                 </div>
             </div>`;
 }
@@ -37,7 +38,7 @@ function createMessageLeftHTML(messageContent) {
     return `<div class="message-left-container">
                 <img src="./icons/blue Icons/user.png" alt="" style="width: 90%; margin-top: 10px;">
                 <div class="message-left">
-                    <p> ${messageContent} </p>
+                    <p style="word-break: break-all;"> ${messageContent} </p>
                 </div>
             </div>`
 }
@@ -77,6 +78,7 @@ function addEmoji(emoji) {
 
 function logOut() {
     location.href = "/";
+    socket.emit('logOut', params.userName);
 }
 
 function displayMessage(conversation) {
@@ -87,9 +89,11 @@ function displayMessage(conversation) {
     }
 }
 
-function getUserInfo(id) {
-    socket.emit('getUserInfo', id);
-    document.getElementById(id).style.backgroundColor = 'transparent';
+function getUserInfo(userName) {
+    var params = jQuery.deparam(window.location.search);
+    sendTo = userName ;
+    socket.emit('getUserInfo', { receiver : userName, sender : params.userName} );
+    document.getElementById(userName).style.backgroundColor = 'transparent';
 }
 
 
@@ -102,9 +106,10 @@ messageInput.addEventListener("keyup", function (event) {
         document.getElementById("sendIcon").click();
     }
 });
+
 sendIcon.addEventListener("click", function () {
     if (sendTo) {
-        socket.emit('sendMessage', { id: sendTo, message: messageInput.value });
+        socket.emit('sendMessage', { sender : params.userName ,receiver: sendTo, message: messageInput.value });
     } else {
         console.log('error');
     }
@@ -117,14 +122,18 @@ socket.on('updateSenderConversation', function (conversation) {
 
 socket.on('updateReceiverConversation', function (data) {
     console.log('received message', data);
-    console.log('test ----', data.senderId, '----', sendTo);
+    console.log('test ----', data.sender, '----', sendTo);
 
-    if (sendTo === data.senderId) {
+    if (sendTo === data.sender) {
         displayMessage(data.conv);
     } else {
-        console.log('else bloc');
-
-        document.getElementById(data.senderId).style.backgroundColor = '#cff2cb';
+        document.getElementById('notif').play();
+        if (styleIsDefault) {
+            document.getElementById(data.sender).style.backgroundColor = '#cff2cb';
+        } else {
+            document.getElementById(data.sender).style.backgroundColor = '#282828';
+        }
+        
     }
 });
 
@@ -135,17 +144,21 @@ socket.on('connect', function () {
 });
 
 
-socket.on('updateUsersList', function (usersList) {
-    console.log(usersList);
-    var params = jQuery.deparam(window.location.search);
-    currentUserName = params.firstName + ' ' + params.lastName;
+socket.on('updateUsersList', function (usersObj) {
+    console.log(usersObj);
     var usersListHTML = '';
-    usersList = usersList.filter((user) => user.name !== currentUserName);
-    usersList.forEach(function (user) {
-        usersListHTML += '<li onclick="getUserInfo(this.id)" id="' + user.id + '" class="onlineUsersListItem"><div class="onlineUserImage-container"><img class="onlineUserImage" src="./icons/blue Icons/user (1).png" alt=""></div><div class="onlineUserName-container"><h6  class="onlineUserName">';
-        usersListHTML += user.name + '</h6></div></li>'
-    })
-    users.innerHTML = usersListHTML;
+    var params = jQuery.deparam(window.location.search);
+    var users = {...usersObj};
+    currentUserName = params.userName;
+    delete users[currentUserName];
+    
+    Object.keys(users).forEach(function(key) {
+        usersListHTML += '<li onclick="getUserInfo(this.id)" id="' + key + '" class="onlineUsersListItem"><div class="onlineUserImage-container"><img class="onlineUserImage" src="./icons/blue Icons/user (1).png" alt=""></div><div class="onlineUserName-container"><h6  class="onlineUserName">';
+        usersListHTML += users[key].name + '</h6></div></li>';
+        console.log(key);
+            
+    });
+    document.getElementById('users').innerHTML = usersListHTML;
 });
 
 socket.on('sendingUserInfo', function (usersData) {
@@ -154,13 +167,14 @@ socket.on('sendingUserInfo', function (usersData) {
     document.getElementById('welcomeCard').style.display = 'none';
     document.getElementById('chatCard').style.display = 'grid';
 
-    sendTo = usersData.receiver.id;
+    // sendTo = usersData.receiver.id;
     if (usersData.sender.conversations[sendTo]) {
         chatCardBody.innerHTML = usersData.sender.conversations[sendTo];
     } else {
         chatCardBody.innerHTML = '';
     }
 });
+
 
 function notWorking() {
     alert('We are Sorry. we are still working on this feature.');

@@ -2,35 +2,39 @@ class Users {
     static count = 0;
 
     constructor () {
-        this.users = [];
+        this.usersObj = {};
     }
 
-    addUser(id, name, conversations) {
-        var user = {id, number : Users.count, name, conversations : {}};
-        this.users.push(user);
-
-        Users.count++ ; 
-        return user ;
+    addUser(userName, name) {
+        var user = {name, conversations : {} }
+        this.usersObj[userName] = user;
     }
 
-    getConversation(conversationId) {
-        return this.users.conversations.conversationId;
+    addMsgToConversation(senderUserName, receiverUserName, message){
+        if (this.usersObj[senderUserName].conversations[receiverUserName]){
+            this.usersObj[senderUserName].conversations[receiverUserName] += message ;
+        } else {
+            this.usersObj[senderUserName].conversations[receiverUserName] = message ;
+        }
     }
 
-    getUser(id) {
-        return this.users.filter( (user) => user.id === id)[0];
+    getConversation(userName, conversationId) {
+        return this.usersObj[userName].conversation[conversationId] ;
     }
 
+    getUser(userName) {
+        return this.usersObj[userName];
+    }
+    /*
     getUserNumber(id) {
         return this.users.filter( (user) => user.id === id)[0].number;
     }
-
-    removeUser(id) {
-        var user = this.getUser(id);
+    */
+    removeUser(userName) {
+        var user = this.getUser(userName);
         if (user){
-            this.users = this.users.filter( (user) => user.id !== id);
+            delete this.usersObj[userName];
         }
-
         return user;
     }
 }

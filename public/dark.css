@@ -16,7 +16,7 @@
 .chatCardHeader {
     background-color: #1d1d1d;
 }
-
+ 
 .chatCardBody, .messageInput {
     background-color: #282828;
 }
@@ -37,4 +37,8 @@
     /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #1c1c1c; 
+}
+
+#welcomeCard > div {
+    background: #1c1c1c;
 }
