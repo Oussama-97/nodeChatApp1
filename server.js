@@ -64,6 +64,9 @@ io.on('connect', (socket) => {
         socket.disconnect();
         var user = users.removeUser(userName);
         if(user){
+            usernamesList.pop(userName);
+            console.log(usernamesList);
+            
             io.emit('updateUsersList', users.usersObj);
         }
     });
