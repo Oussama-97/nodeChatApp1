@@ -72,7 +72,6 @@ function showEmojiBox() {
     emojiBoxIsOpen = !emojiBoxIsOpen;
 }
 function addEmoji(emoji) {
-    console.log(emoji);
     document.getElementById('messageInput').value += emoji;
 }
 
@@ -111,7 +110,6 @@ sendIcon.addEventListener("click", function () {
     if (sendTo) {
         socket.emit('sendMessage', { sender : params.userName ,receiver: sendTo, message: messageInput.value });
     } else {
-        console.log('error');
     }
     messageInput.value = '';
 });
@@ -121,8 +119,6 @@ socket.on('updateSenderConversation', function (conversation) {
 });
 
 socket.on('updateReceiverConversation', function (data) {
-    console.log('received message', data);
-    console.log('test ----', data.sender, '----', sendTo);
 
     if (sendTo === data.sender) {
         displayMessage(data.conv);
@@ -138,14 +134,12 @@ socket.on('updateReceiverConversation', function (data) {
 });
 
 socket.on('connect', function () {
-    console.log('Connected to Server', socket.id);
     var params = jQuery.deparam(window.location.search);
     socket.emit('join', params);
 });
 
 
 socket.on('updateUsersList', function (usersObj) {
-    console.log(usersObj);
     var usersListHTML = '';
     var params = jQuery.deparam(window.location.search);
     var users = {...usersObj};
@@ -155,14 +149,12 @@ socket.on('updateUsersList', function (usersObj) {
     Object.keys(users).forEach(function(key) {
         usersListHTML += '<li onclick="getUserInfo(this.id)" id="' + key + '" class="onlineUsersListItem"><div class="onlineUserImage-container"><img class="onlineUserImage" src="./icons/blue Icons/user (1).png" alt=""></div><div class="onlineUserName-container"><h6  class="onlineUserName">';
         usersListHTML += users[key].name + '</h6></div></li>';
-        console.log(key);
             
     });
     document.getElementById('users').innerHTML = usersListHTML;
 });
 
 socket.on('sendingUserInfo', function (usersData) {
-    console.log(usersData);
     document.getElementById('chatting-userName').innerHTML = usersData.receiver.name;
     document.getElementById('welcomeCard').style.display = 'none';
     document.getElementById('chatCard').style.display = 'grid';

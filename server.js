@@ -31,7 +31,6 @@ function createMessageLeftHTML (messageContent) {
 
 
 io.on('connect', (socket) => {
-    console.log('Connected to server', socket.id);
     socket.on('getusernames', () => {
         socket.emit('usernames', usernamesList);
     });
@@ -48,14 +47,9 @@ io.on('connect', (socket) => {
     });
 
     socket.on('sendMessage', (data) => {
-        console.log(data);
-        console.log(users.usersObj);
-        
         users.addMsgToConversation(data.sender, data.receiver, createMessageRightHTML(data.message) );
         users.addMsgToConversation(data.receiver, data.sender, createMessageLeftHTML(data.message) );
     
-        
-        console.log(users.usersObj);
         socket.broadcast.to(data.receiver).emit('updateReceiverConversation', {conv: users.usersObj[data.receiver].conversations[data.sender], sender: data.sender} );
         socket.emit('updateSenderConversation', users.usersObj[data.sender].conversations[data.receiver]);
     });
@@ -65,7 +59,6 @@ io.on('connect', (socket) => {
         var user = users.removeUser(userName);
         if(user){
             usernamesList.pop(userName);
-            console.log(usernamesList);
             
             io.emit('updateUsersList', users.usersObj);
         }
